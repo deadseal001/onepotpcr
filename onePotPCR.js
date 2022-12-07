@@ -1,8 +1,13 @@
 const inquirer = require('inquirer');
-// import chalk from 'chalk';
+//const chalk = require('chalk');
+//import chalk from 'chalk';
 
 const calnumber=(a,b,c)=>{
     //set array number 
+    if (c===1){
+        console.log("Attention! the PCR product won't be amplified by adaptor primer!");
+    }
+
     let arr=[];
     for (let i=0; i<a; i++){
         arr[i]=i+1;
@@ -10,8 +15,8 @@ const calnumber=(a,b,c)=>{
     let arr1=[];
     arr.map(element=>arr1.push(element));
     let arr2=arr.reverse();
-    let templateArr1=[arr1];
-    let templateArr2=[arr2];
+    let templateArr1=[];
+    let templateArr2=[];
     let productArr1=[];
     let productArr2=[]
 
@@ -19,10 +24,19 @@ const calnumber=(a,b,c)=>{
         productArr1=[];
         productArr2=[];
 
-        if (j!=c-1){
-        templateArr1.push(arr1);
-        templateArr2.push(arr2);
+        if (j===0){
+            console.log("cycle else "+(j+1));
+            templateArr1.push(arr1);
+            templateArr2.push(arr2);
+        }
+        else if (j===c-1){
+            console.log("cycle "+(j+1));
+        } else {
+            console.log("cycle else "+(j+1));
+            templateArr1.push(arr1);
+            templateArr2.push(arr2);
         } 
+        console.log("  template: ",templateArr1,templateArr2);
 
         for (let i=0;i<templateArr1.length;i++){
             //push pcr product into new array
@@ -37,19 +51,28 @@ const calnumber=(a,b,c)=>{
         }
         templateArr1=productArr1;
         templateArr2=productArr2;
-
     }
 
     let productArr=productArr1.concat(productArr2);
     console.log(productArr.length);
+    console.log(productArr);
     let lengthArr=[]
-    for (i=0;i,productArr.length;i++){
-        let temp=productArr[i];//.join('');
-        console.log(temp);
-        let len=temp.length;
-        lengthArr.push(len);
+    let midnumber=Math.floor(a/2);
+    let midArry=[];
+    let midLengthArr=[];
+    for (let i=0;i<productArr.length;i++){
+        productArr[i].sort(function(a, b){return a - b});
+        lengthArr.push(productArr[i].length);
+        if (productArr[i].includes(arr[midnumber])){
+            midArry.push(productArr[i]);
+            midLengthArr.push(productArr[i].length);
+        }
     }
     console.log(lengthArr);
+    console.log("fragment containing middle fragment",midArry,midArry.length);
+    console.log(midLengthArr,midLengthArr.length);
+
+
 }
 
 function calculate () {
@@ -72,7 +95,7 @@ function calculate () {
             {
                 type: 'number',
                 name: 'extentnumber',
-                message: 'Please enter the estimate how many primers that one pcr cycle can cover(required, >=1):',
+                message: 'Please enter the estimate of primer numbers that one pcr cycle can cover(required, >=1):',
                 validate: Input=>{
                     if (!Number.isInteger(Input)){
                         console.log("The input number must be integer number larger than 0!");
